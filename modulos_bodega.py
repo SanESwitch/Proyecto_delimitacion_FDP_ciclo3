@@ -152,8 +152,41 @@ def calcular_merma(inventario):
 
 def mostrar_inventario(inventario):
     print("\n--- REPORTE DE STOCK ACTUAL ---")
-    # Pendiente desarrollar
-    pass 
+    
+    # 1. Validación de seguridad: Si no hay datos registrados
+    if not inventario:
+        print("El inventario está vacío. No hay lotes registrados para mostrar.")
+        print(">> Fin del reporte.")
+        return
+
+    print("Generando listado de zonas y productos en tiempo real...\n")
+    
+    # Cabecera de nuestra tabla informativa
+    # Los símbolos <15, <8, etc., sirven para alinear el texto en columnas perfectas
+    print(f"{'N°':<3} | {'Producto':<15} | {'Cajas':<6} | {'Peso (Kg)':<9} | {'Zona Asignada':<25} | {'Merma':<7} | {'Estado Stock'}")
+    print("-" * 95)
+    
+    # 2. Recorrer los "arreglos reales" (lista de diccionarios) para imprimir cada lote
+    for i, lote in enumerate(inventario):
+        nombre = lote["nombre_prod"]
+        cajas = lote["cantidad_cajas"]
+        peso = lote["peso_prod"]
+        zona = lote["zona_asignada"]
+        merma = lote["porcentaje_merma"]
+        estado = lote["estado_merma"]
+        
+        # Determinar el color/estado de disponibilidad según las reglas del proyecto
+        if estado == "ALERTA ROJA":
+            estado_visual = "ROJO (Merma Excesiva)"
+        elif estado == "Aceptable":
+            estado_visual = "VERDE (Disponible)"
+        else:
+            estado_visual = "VERDE (Sin evaluar merma)"
+            
+        # Imprimir la fila formateada
+        print(f"{i + 1:<3} | {nombre:<15} | {cajas:<6} | {peso:<9.1f} | {zona:<25} | {merma:<5.1f}% | {estado_visual}")
+        
+    print("\n>> Fin del reporte.")
 
 def guardar_datos(inventario):
     print("\n--- GUARDAR Y SALIR ---")
