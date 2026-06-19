@@ -93,8 +93,62 @@ def asignar_zona(inventario):
 
 def calcular_merma(inventario):
     print("\n--- CÁLCULO DE MERMA ---")
-    # Pendiente desarrollar
-    pass 
+    
+    # 1. Validación de seguridad: Verificar si hay lotes en el inventario
+    if not inventario:
+        print("ERROR: No hay lotes registrados en el inventario. Use la opción 1 primero.")
+        return
+
+    # 2. Mostrar los lotes registrados para que el usuario elija cuál evaluar
+    print("Seleccione el lote para registrar mermas:")
+    for i, lote in enumerate(inventario):
+        print(f"  {i + 1}. Producto: {lote['nombre_prod']} | Total Cajas: {lote['cantidad_cajas']} | Merma actual: {lote['porcentaje_merma']:.2f}%")
+        
+    # 3. Validar la selección del lote
+    while True:
+        try:
+            seleccion = int(input("Ingrese el número del lote (ej. 1): "))
+            if 1 <= seleccion <= len(inventario):
+                lote_seleccionado = inventario[seleccion - 1]
+                break
+            else:
+                print(f"ERROR: Selección inválida. Elija un número entre 1 y {len(inventario)}.")
+        except ValueError:
+            print("ERROR: Por favor ingrese un número entero válido.")
+
+    # Tomamos de forma automática las cajas totales guardadas en el lote
+    cajas_totales = lote_seleccionado["cantidad_cajas"]
+    print(f"\nProducto seleccionado: {lote_seleccionado['nombre_prod']} (Total de cajas en stock: {cajas_totales})")
+
+    # 4. Leer y validar las cajas dañadas (Equivalente al condicional Si cajas_danadas > cajas_totales)
+    while True:
+        try:
+            cajas_danadas = int(input("Ingrese cantidad de cajas dañadas/aplastadas: "))
+            if cajas_danadas < 0:
+                print("ERROR: Las cajas dañadas no pueden ser un número negativo.")
+            elif cajas_danadas > cajas_totales:
+                print(f"ERROR: Las cajas dañadas ({cajas_danadas}) no pueden superar el total de cajas ({cajas_totales}). Reintente.")
+            else:
+                break # Entrada válida, salimos del bucle
+        except ValueError:
+            print("ERROR: Por favor ingrese un número entero válido.")
+
+    # 5. Cálculo del porcentaje de merma (Fórmula exacta de tu pseudocódigo)
+    porcentaje_merma = (cajas_danadas / cajas_totales) * 100
+    
+    # Guardamos los resultados dentro de nuestro lote seleccionado
+    lote_seleccionado["cajas_danadas"] = cajas_danadas
+    lote_seleccionado["porcentaje_merma"] = porcentaje_merma
+    
+    print(f">> Porcentaje de merma: {porcentaje_merma:.2f}%")
+    
+    # 6. Evaluación de Umbrales (Estructura Si-Entonces-Sino de tu pseudocódigo)
+    if porcentaje_merma > 15:
+        lote_seleccionado["estado_merma"] = "ALERTA ROJA"
+        print("ALERTA ROJA: Merma excesiva, revisar estiba urgente.")
+    else:
+        lote_seleccionado["estado_merma"] = "Aceptable"
+        print("Estado Aceptable.")
 
 def mostrar_inventario(inventario):
     print("\n--- REPORTE DE STOCK ACTUAL ---")
