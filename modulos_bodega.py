@@ -190,5 +190,34 @@ def mostrar_inventario(inventario):
 
 def guardar_datos(inventario):
     print("\n--- GUARDAR Y SALIR ---")
-    # Pendiente desarrollar
-    pass
+    print("Guardando registros de estiba y merma en la base de datos (archivo de texto)...")
+    
+    try:
+        # La instrucción 'with open' crea el archivo y se asegura de cerrarlo automáticamente al terminar
+        with open("reporte_inventario.txt", "w", encoding="utf-8") as archivo:
+            # Escribimos la cabecera del archivo
+            archivo.write("========================================\n")
+            archivo.write("   REPORTE FINAL - BODEGA EL AHORRO     \n")
+            archivo.write("========================================\n\n")
+            
+            if not inventario:
+                archivo.write("El sistema se cerró sin registros de productos.\n")
+            else:
+                # Recorremos el inventario y escribimos los datos de cada lote
+                for i, lote in enumerate(inventario):
+                    archivo.write(f"--- Lote {i + 1} ---\n")
+                    archivo.write(f"Producto: {lote['nombre_prod']}\n")
+                    archivo.write(f"Cajas Totales: {lote['cantidad_cajas']}\n")
+                    archivo.write(f"Peso Total: {lote['peso_prod']} Kg\n")
+                    archivo.write(f"Empaque: {lote['tipo_empaque']}\n")
+                    archivo.write(f"Zona Asignada: {lote['zona_asignada']}\n")
+                    archivo.write(f"Cajas Dañadas: {lote['cajas_danadas']}\n")
+                    archivo.write(f"Porcentaje de Merma: {lote['porcentaje_merma']:.2f}%\n")
+                    archivo.write(f"Estado de Merma: {lote['estado_merma']}\n")
+                    archivo.write("-" * 40 + "\n\n")
+                    
+        print(">> ¡Datos guardados exitosamente en 'reporte_inventario.txt'! Cerrando sistema.")
+        
+    except Exception as e:
+        # Por si ocurre algún error inesperado al intentar crear el archivo (ej. permisos de Windows)
+        print(f"ERROR: Ocurrió un problema al guardar el archivo: {e}")
